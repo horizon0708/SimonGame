@@ -11,12 +11,13 @@ let counter = 0;
 let currentAnswer = '';
 let sequence = generateSequence();
 let isPlaying = false;
+let turn = 1;
 const audioOne = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3');
 const audioTwo = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3');
 const audioThree = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3');
 const audioFour = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3');
 
-function generateSequence () {
+function generateSequence() {
     let sequence = '';
     for (let i = 0; i < 20; i++) {
         sequence += Math.floor(Math.random() * 4).toString();
@@ -24,64 +25,104 @@ function generateSequence () {
     return sequence;
 }
 
-var playSequence = (turn) => {
-    isPlaying = true;
+var playSequence = (turn) => new Promise((resolve, reject) => {
     counter = 0;
-    userInput = '';
-    currentAnswer = ''; // reset current answer
-    for (let i = 0; i < turn; i++) {
-        answer += sequence[num];    
-    }
-    for (var i=0;i<=turn;i++) {
-        (function(ind) {
-            setTimeout(function(){
-                switch (sequence[ind]){
-                    case 0: audioOne.play(); break;
-                    case 1: audioTwo.play(); break;
-                    case 2: audioThree.play(); break;
-                    case 3: audioFour.play(); break;
-                    default: break;
+    console.log(sequence);
+    isPlaying = true;
+    for (var i = 0; i < turn; i++) {
+        (function (ind) {
+            setTimeout(function () {
+                switch (sequence[ind]) {
+                    case "0":
+                        audioOne.play(); console.log("audio 1");
+                        $('#0').css("background-color", "green");
+                        setTimeout(function () {
+                            $('#0').css("background-color", "white");
+                        }, 500);
+                        break;
+                    case "1":
+                        audioTwo.play(); console.log("audio 2");
+                        $('#1').css("background-color", "red");
+                        setTimeout(function () {
+                            $('#1').css("background-color", "white");
+                        }, 500);
+                        break;
+                    case "2":
+                        audioThree.play(); console.log("audio 3");
+                        $('#2').css("background-color", "yellow");
+                        setTimeout(function () {
+                            $('#2').css("background-color", "white");
+                        }, 500);
+                        break;
+                    case "3":
+                        audioFour.play(); console.log("audio 4");
+                        $('#3').css("background-color", "blue");
+                        setTimeout(function () {
+                            $('#3').css("background-color", "white");
+                        }, 500);
+                        break;
+                    default:
+                        break;
                 }
-                console.log(ind); 
-                console.log(isPlaying);
-            }, 1000 + (3000 * ind));
+                resolve;
+                console.log("current seq[index] is: " + sequence[ind]);
+            }, 1000 + (2000 * ind));
         })(i);
     }
-    isPlaying = false;
-}
+});
 
-var playNote = (num) => {
-    //play the note using sequnce[num]
-
-}
-
-$('.button').click(function(e){
-    if (currentAnswer[counter] !== e.currentTarget.id){
-        //repeat
+$('.button').click(function (e) {
+    if (isPlaying){
+        console.log("sequence is playing!");
+        return;
+    }
+    
+    if (sequence[counter] !== e.currentTarget.id) {
+        playSequence(turn);
         counter = 0;
         return;
     }
     counter++;
-    
-    //
 
     // make sound;
-    switch (e.currentTarget.id){
-        case 0: audioOne.play(); break;
-        case 1: audioTwo.play(); break;
-        case 2: audioThree.play(); break;
-        case 3: audioFour.play(); break;
+    switch (e.currentTarget.id) {
+        case "0": audioOne.play();
+            $('#0').css("background-color", "green");
+            setTimeout(function () {
+                $('#0').css("background-color", "white");
+            }, 500);
+            break;
+        case "1": audioTwo.play();
+            $('#1').css("background-color", "red");
+            setTimeout(function () {
+                $('#1').css("background-color", "white");
+            }, 500);
+            break;
+        case "2": audioThree.play();
+            $('#2').css("background-color", "yellow");
+            setTimeout(function () {
+                $('#2').css("background-color", "white");
+            }, 500);
+            break;
+        case "3": audioFour.play();
+            $('#3').css("background-color", "blue");
+            setTimeout(function () {
+                $('#3').css("background-color", "white");
+            }, 500);
+            break;
         default: break;
     }
 
-    if (counter == turn){
-        // playSequence();
+
+    if (counter == turn) {
+        $('#comm').html('success!');
+        turn++;
+        playSequence(turn);
     }
 
-    turn++;
     if (turn > 20) {
         //win game;
-        console.log("you've won teh game! but you have lost 'the game'."); 
+        console.log("you've won teh game! but you have lost 'the game'.");
     }
 });
-playSequence(10);
+playSequence(turn).then(() => {isPlaying = false;});
