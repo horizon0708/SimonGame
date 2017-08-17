@@ -21,7 +21,7 @@ class SimonGame extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // Go to Next Turn when inputs are right
+        // Go to Next Turn when the inputs are right
         if(prevState.gameState === "AWAITING_INPUT" && this.state.gameState === "NEXT_TURN"){
             this.setState({
                 gameState: "PLAYING_INSTRUCTION",
@@ -29,7 +29,7 @@ class SimonGame extends React.Component {
                 currentSequence: 0
             });
         }
-        // Replay instruction when input is wrong
+        // Replay instruction when the input is wrong
         if(prevState.gameState === "AWAITING_INPUT" && this.state.gameState === "INCORRECT"){
             this.setState({ gameState: "PLAYING_INSTRUCTION"});
         }

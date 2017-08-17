@@ -1,0 +1,3 @@
+
+* Buttons componenet -> CDU -> would not work for repeated presses;
+    - if it is just color change, perhaps there is no need to have state for it.
